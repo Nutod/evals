@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0d261e" />
+    <meta name="description" content="Procedural 3D model of Alexanderplatz, Berlin, built from OpenStreetMap data with Three.js." />
+    <title>Alexanderplatz 3D</title>
+  </head>
+  <body>
+    <div id="viewport" aria-label="3D map of Alexanderplatz" role="application"></div>
+    <div id="labels" aria-hidden="true"></div>
+
+    <aside id="panel" class="panel" data-open="false" aria-label="Map controls">
+      <header class="brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div class="brand-text">
+          <h1>Alexanderplatz</h1>
+          <p>Berlin-Mitte · procedural 3D map</p>
+        </div>
+        <button id="sheet-toggle" class="icon-button sheet-toggle" aria-expanded="false" aria-controls="panel-body" aria-label="Show controls">
+          <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M5 12l5-5 5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        </button>
+      </header>
+
+      <section class="section section-view" aria-labelledby="h-view">
+        <h2 id="h-view"><span>01</span>View</h2>
+        <div class="view-row">
+          <div class="segmented" role="radiogroup" aria-label="Camera mode" data-group="mode">
+            <button role="radio" data-value="orbit" aria-checked="true">Orbit</button>
+            <button role="radio" data-value="top" aria-checked="false">Top-down</button>
+            <button role="radio" data-value="street" aria-checked="false">Street</button>
+          </div>
+          <button id="circle" class="button circle" aria-pressed="false" title="Slowly circle around the view, like a fly-around. Drag or zoom to stop.">
+            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.6-3.7M13 2.5v2.8h-2.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            Circle
+          </button>
+        </div>
+      </section>
+
+      <div id="panel-body" class="panel-body">
+        <section class="section" aria-labelledby="h-landmarks">
+          <h2 id="h-landmarks"><span>02</span>Landmarks</h2>
+          <ul id="landmarks" class="landmarks"></ul>
+        </section>
+
+        <section class="section" aria-labelledby="h-light">
+          <h2 id="h-light"><span>03</span>Light</h2>
+          <div class="segmented" role="radiogroup" aria-label="Lighting" data-group="light">
+            <button role="radio" data-value="day" aria-checked="true">Daylight</button>
+            <button role="radio" data-value="golden" aria-checked="false">Golden hour</button>
+            <button role="radio" data-value="blue" aria-checked="false">Blue hour</button>
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="h-layers">
+          <h2 id="h-layers"><span>04</span>Layers</h2>
+          <div id="layers" class="layers"></div>
+        </section>
+
+        <section class="section" aria-labelledby="h-motion">
+          <h2 id="h-motion"><span>05</span>Motion</h2>
+          <div class="motion">
+            <button id="play" class="button" aria-pressed="true">
+              <svg class="i-pause" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12" rx="1" /><rect x="9.5" y="2" width="3.5" height="12" rx="1" /></svg>
+              <svg class="i-play" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" /></svg>
+              <span>Pause</span>
+            </button>
+            <div class="segmented compact" role="radiogroup" aria-label="Animation speed" data-group="speed">
+              <button role="radio" data-value="0.5" aria-checked="false">½×</button>
+              <button role="radio" data-value="1" aria-checked="true">1×</button>
+              <button role="radio" data-value="2" aria-checked="false">2×</button>
+              <button role="radio" data-value="4" aria-checked="false">4×</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="h-export">
+          <h2 id="h-export"><span>06</span>Export</h2>
+          <button id="export" class="button primary">
+            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 2v8m0 0l-3-3m3 3l3-3M3 12.5h10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            Save view as PNG
+          </button>
+        </section>
+
+        <footer class="panel-footer">
+          <button id="about-open" class="link">About this model</button>
+        </footer>
+      </div>
+    </aside>
+
+    <div class="hud" aria-live="polite">
+      <button id="compass" class="compass" aria-label="Face north">
+        <svg viewBox="0 0 40 40" width="40" height="40" aria-hidden="true">
+          <g id="compass-needle">
+            <path d="M20 5l5 15h-10z" class="needle-n" />
+            <path d="M20 35l-5-15h10z" class="needle-s" />
+          </g>
+        </svg>
+        <span class="compass-n" aria-hidden="true">N</span>
+      </button>
+      <div class="scale" aria-label="Map scale">
+        <div id="scale-bar" class="scale-bar"></div>
+        <span id="scale-label">100 m</span>
+      </div>
+      <div id="coords" class="coords">52.52075° N 13.41100° E</div>
+    </div>
+
+    <p id="hint" class="hint" role="status"></p>
+
+    <div id="joystick" class="joystick" hidden aria-label="Walk joystick">
+      <div class="joystick-knob"></div>
+    </div>
+
+    <p class="attribution">
+      Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a><span class="attr-long">, ODbL. Procedural geometry; architectural details are approximate.</span><span class="attr-short"> · details approximate</span>
+    </p>
+
+    <dialog id="about" class="about" aria-labelledby="about-title">
+      <form method="dialog">
+        <h2 id="about-title">About this model</h2>
+        <p>Every mesh, material, texture and sign in this scene is generated in code. There are no imported 3D models, photographs or map tiles, and the page makes no network requests at runtime.</p>
+        <h3>Data</h3>
+        <p>Building footprints and heights, streets, tram and rail lines, trees, lamps, benches and stops come from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>, © OpenStreetMap contributors, available under the Open Database License. The data was baked into the app at build time. One scene unit is one metre.</p>
+        <h3>Accuracy</h3>
+        <p>The Fernsehturm, Park Inn, Weltzeituhr, Alexanderplatz station, Rotes Rathaus and Marienkirche are hand-modelled from published dimensions and their OSM footprints. Overall heights and positions are close to reality; facades, ornament, window counts, signage and interior details are simplified or invented. Other buildings use generic facades chosen from their OSM tags. Traffic, timetables and crowd density are illustrative, not real.</p>
+        <button class="button primary" value="close">Close</button>
+      </form>
+    </dialog>
+
+    <div id="loader" class="loader" role="status">
+      <div class="loader-mark" aria-hidden="true"></div>
+      <p id="loader-text">Generating city geometry…</p>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

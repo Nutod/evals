@@ -1,0 +1,2 @@
+# Raw Overpass responses for `npm run bake:osm`; the baked src/data/osm.json is committed.
+.osm-cache

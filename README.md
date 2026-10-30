@@ -4,9 +4,10 @@ AI-generated implementations of shared coding tasks, organized by category, task
 
 ## 3D evaluations
 
-| Task                   | Model       | Implementation                                                  |
-| ---------------------- | ----------- | --------------------------------------------------------------- |
-| Alexanderplatz, Berlin | GPT-6.1 Sol | [3d/alexanderplatz/gpt-6-1-sol](3d/alexanderplatz/gpt-6-1-sol/) |
+| Task                   | Model       | Implementation                                                          |
+| ---------------------- | ----------- | ----------------------------------------------------------------------- |
+| Alexanderplatz, Berlin | GPT-6.1 Sol | [3d/alexanderplatz/gpt-6-1-sol](3d/alexanderplatz/gpt-6-1-sol/)         |
+| Alexanderplatz, Berlin | Opus 5.5    | [3d/alexanderplatz/claude-opus-5-5](3d/alexanderplatz/claude-opus-5-5/) |
 
 ## Run Alexanderplatz
 
