@@ -1,10 +1,10 @@
-# Factory
+# Evals
 
-Experiments grouped by medium, scene and model. Each experiment has its own dependencies, commands and documentation.
+AI-generated implementations of shared coding tasks, organized by category, task and model. Each implementation has its own source, dependencies, tests and run instructions.
 
-## 3D experiments
+## 3D evaluations
 
-| Scene                  | Model       | App                                                             |
+| Task                   | Model       | Implementation                                                  |
 | ---------------------- | ----------- | --------------------------------------------------------------- |
 | Alexanderplatz, Berlin | GPT-6.1 Sol | [3d/alexanderplatz/gpt-6-1-sol](3d/alexanderplatz/gpt-6-1-sol/) |
 
