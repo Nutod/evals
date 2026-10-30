@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#120d0a" />
+    <meta name="description" content="The Lonely Mountain and the town of Dale on the day the dragon came: a procedural Three.js valley driven by one approach slider." />
+    <title>The Day the Dragon Came</title>
+    <link rel="stylesheet" href="./src/ui/styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div id="viewport" role="application" aria-label="The valley of Dale beneath the Lonely Mountain. Drag to orbit, right-drag to pan, scroll to zoom."></div>
+
+    <section id="timeline" class="timeline" aria-label="The day the dragon came">
+      <div class="readout" aria-hidden="true">
+        <span id="readout-hour" class="readout-hour">Noon</span>
+        <span id="readout-clock" class="readout-clock">12:00</span>
+      </div>
+      <div id="track" class="track">
+        <div class="track-rail"></div>
+        <div id="track-fill" class="track-fill"></div>
+        <ol id="stops" class="stops"></ol>
+        <div id="handle" class="handle" role="slider" tabindex="0" aria-label="Hour of the day" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0" aria-valuetext="Noon, 12:00"></div>
+      </div>
+    </section>
+
+    <nav id="dock" class="dock" aria-label="View controls">
+      <div class="dock-group" role="group" aria-label="Viewpoints">
+        <select id="views" class="dock-select" aria-label="Viewpoint">
+          <option value="vantage">Southern slopes</option>
+          <option value="market">Market square</option>
+          <option value="falls">Bridge over the falls</option>
+          <option value="gate">Before the Front Gate</option>
+          <option value="aerial">High over the valley</option>
+          <option value="free" disabled hidden>Free view</option>
+        </select>
+      </div>
+      <label class="dock-range" title="Activity density">
+        <span>Life</span>
+        <input id="density" type="range" min="0.2" max="1" step="0.05" value="1" aria-label="Activity density" />
+      </label>
+      <select id="quality" class="dock-select compact" aria-label="Quality">
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+      </select>
+      <button id="notes-toggle" class="dock-button" aria-pressed="false" title="Hour notes">
+        <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M3 2.5h10v11H3z M5.5 5.5h5 M5.5 8h5 M5.5 10.5h3" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" /></svg>
+        <span>Notes</span>
+      </button>
+      <button id="photo" class="dock-button" title="Photo mode (P)">
+        <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M2 5h2.5l1.2-1.8h4.6L11.5 5H14v8H2z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" /><circle cx="8" cy="9" r="2.3" fill="none" stroke="currentColor" stroke-width="1.3" /></svg>
+        <span>Photo</span>
+      </button>
+    </nav>
+
+    <aside id="notes" class="notes" hidden aria-live="polite">
+      <h2 id="notes-title">Noon</h2>
+      <p id="notes-body"></p>
+      <ul id="notes-places" class="notes-places"></ul>
+    </aside>
+    <div id="markers" class="markers" aria-hidden="true"></div>
+
+    <div id="photo-bar" class="photo-bar" hidden>
+      <button id="photo-save" class="dock-button">Save PNG</button>
+      <button id="photo-exit" class="dock-button">Exit photo mode</button>
+    </div>
+
+    <div id="loader" class="loader" role="status">
+      <p id="loader-text">Raising the Mountain…</p>
+    </div>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
