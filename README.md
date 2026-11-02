@@ -8,6 +8,17 @@ AI-generated implementations of shared coding tasks, organized by category, task
 | ---------------------- | ----------- | ----------------------------------------------------------------------- |
 | Alexanderplatz, Berlin | GPT-6.1 Sol | [3d/alexanderplatz/gpt-6-1-sol](3d/alexanderplatz/gpt-6-1-sol/)         |
 | Alexanderplatz, Berlin | Opus 5.5    | [3d/alexanderplatz/claude-opus-5-5](3d/alexanderplatz/claude-opus-5-5/) |
+| The Lonely Mountain | GPT-6.1 Sol | [3d/lonely-mountain/gpt-6-1-sol](3d/lonely-mountain/gpt-6-1-sol/) |
+
+## Run the Lonely Mountain
+
+```sh
+cd 3d/lonely-mountain/gpt-6-1-sol
+npm ci
+npm run dev -- --port 5174
+```
+
+The [app README](3d/lonely-mountain/gpt-6-1-sol/README.md) covers controls, procedural rendering, fidelity limits and production browser tests.
 
 ## Run Alexanderplatz
 

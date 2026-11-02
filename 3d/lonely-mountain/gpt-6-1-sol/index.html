@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#17251f" />
+    <meta
+      name="description"
+      content="One valley. One day. A procedural, living journey through the last day of the kingdom under the Mountain."
+    />
+    <title>The day the dragon came</title>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "/node_modules/three/build/three.module.js",
+          "three/addons/": "/node_modules/three/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <canvas
+      id="world"
+      aria-label="A living 3D valley beneath the Lonely Mountain. Drag to orbit, scroll to explore."
+      tabindex="0"
+    ></canvas>
+    <div id="interface"></div>
+    <div id="failure" hidden role="alert"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
