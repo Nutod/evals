@@ -8,9 +8,12 @@ AI-generated implementations of shared coding tasks, organized by category, task
 | ---------------------- | ----------- | ----------------------------------------------------------------------- |
 | Alexanderplatz, Berlin | GPT-6.1 Sol | [3d/alexanderplatz/gpt-6-1-sol](3d/alexanderplatz/gpt-6-1-sol/)         |
 | Alexanderplatz, Berlin | Opus 5.5    | [3d/alexanderplatz/claude-opus-5-5](3d/alexanderplatz/claude-opus-5-5/) |
-| The Lonely Mountain | GPT-6.1 Sol | [3d/lonely-mountain/gpt-6-1-sol](3d/lonely-mountain/gpt-6-1-sol/) |
+| The Lonely Mountain    | GPT-6.1 Sol | [3d/lonely-mountain/gpt-6-1-sol](3d/lonely-mountain/gpt-6-1-sol/) |
+| The Lonely Mountain    | Opus 5.5    | [3d/lonely-mountain/claude-opus-5-5](3d/lonely-mountain/claude-opus-5-5/) |
 
 ## Run the Lonely Mountain
+
+### GPT-6.1 Sol
 
 ```sh
 cd 3d/lonely-mountain/gpt-6-1-sol
@@ -19,6 +22,17 @@ npm run dev -- --port 5174
 ```
 
 The [app README](3d/lonely-mountain/gpt-6-1-sol/README.md) covers controls, procedural rendering, fidelity limits and production browser tests.
+
+### Opus 5.5
+
+No build step; three.js is loaded from a pinned CDN URL through an import map.
+
+```sh
+cd 3d/lonely-mountain/claude-opus-5-5
+npm install
+npm run dev   # http://localhost:5173
+npm test
+```
 
 ## Run Alexanderplatz
 
