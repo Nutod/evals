@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0f2a22" />
+    <meta name="description" content="A procedural, metre-accurate 3D model of Alexanderplatz, Berlin, built from OpenStreetMap footprints." />
+    <title>Alexanderplatz · procedural city model</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230f2a22'/%3E%3Cpath d='M16 3v26M13 22h6l-2-9h-2z' stroke='%23f2cc2e' stroke-width='2' fill='none'/%3E%3Ccircle cx='16' cy='11' r='3.2' fill='%23f2cc2e'/%3E%3C/svg%3E" />
+  </head>
+  <body>
+    <canvas id="scene" aria-label="3D view of Alexanderplatz" tabindex="0"></canvas>
+    <div id="labels" aria-hidden="true"></div>
+
+    <div id="loading" role="status" aria-live="polite">
+      <div class="loading-card">
+        <p class="eyebrow">Berlin Mitte · 52.5211° N 13.4118° E</p>
+        <h1>Alexanderplatz</h1>
+        <div class="progress"><div id="progress-bar"></div></div>
+        <p id="progress-label">Starting</p>
+      </div>
+    </div>
+
+    <aside id="panel" aria-label="Map controls">
+      <header class="panel-head">
+        <button id="sheet-handle" type="button" aria-label="Expand or collapse controls" aria-expanded="false"><span></span></button>
+        <p class="eyebrow">Berlin Mitte · scale 1 unit = 1 m</p>
+        <h1>Alexanderplatz</h1>
+        <p class="lede">Procedural model on OpenStreetMap footprints</p>
+      </header>
+
+      <nav id="tabs" role="tablist" aria-label="Control sections">
+        <button role="tab" type="button" data-tab="view" aria-selected="true">View</button>
+        <button role="tab" type="button" data-tab="places" aria-selected="false">Places</button>
+        <button role="tab" type="button" data-tab="layers" aria-selected="false">Layers</button>
+        <button role="tab" type="button" data-tab="motion" aria-selected="false">Motion</button>
+      </nav>
+
+      <div class="panel-body">
+        <section data-section="view">
+          <h2>Camera</h2>
+          <div class="segmented" id="mode" role="group" aria-label="Camera mode">
+            <button type="button" data-mode="orbit" aria-pressed="true">Orbit</button>
+            <button type="button" data-mode="top" aria-pressed="false">Top-down</button>
+            <button type="button" data-mode="street" aria-pressed="false">Street</button>
+          </div>
+          <p class="hint" id="mode-hint"></p>
+
+          <h2>Light</h2>
+          <div class="segmented" id="lighting" role="group" aria-label="Lighting">
+            <button type="button" data-light="day" aria-pressed="true">Daylight</button>
+            <button type="button" data-light="golden" aria-pressed="false">Golden hour</button>
+            <button type="button" data-light="blue" aria-pressed="false">Blue hour</button>
+          </div>
+        </section>
+
+        <section data-section="places">
+          <h2>Landmarks</h2>
+          <ol id="landmarks"></ol>
+          <article id="landmark-card" hidden>
+            <p class="eyebrow" id="card-kind"></p>
+            <h3 id="card-name"></h3>
+            <ul id="card-facts"></ul>
+            <p class="approx"><strong>Approximated here:</strong> <span id="card-approx"></span></p>
+          </article>
+        </section>
+
+        <section data-section="layers">
+          <h2>Layers</h2>
+          <div id="layers" class="checks"></div>
+        </section>
+
+        <section data-section="motion">
+          <h2>Animation</h2>
+          <div class="row">
+            <button type="button" id="play" class="button" aria-pressed="true">Pause</button>
+            <div class="segmented compact" id="speed" role="group" aria-label="Animation speed">
+              <button type="button" data-speed="0.5" aria-pressed="false">½×</button>
+              <button type="button" data-speed="1" aria-pressed="true">1×</button>
+              <button type="button" data-speed="2" aria-pressed="false">2×</button>
+              <button type="button" data-speed="4" aria-pressed="false">4×</button>
+            </div>
+          </div>
+          <label class="check"><input type="checkbox" id="auto-orbit" /><span>Circle the view slowly</span></label>
+          <p class="readout">Local time <output id="clock">13:30</output></p>
+
+          <h2>Export</h2>
+          <div class="row">
+            <button type="button" id="export" class="button primary">Save PNG</button>
+            <div class="segmented compact" id="export-scale" role="group" aria-label="Export resolution">
+              <button type="button" data-scale="1" aria-pressed="true">1×</button>
+              <button type="button" data-scale="2" aria-pressed="false">2×</button>
+            </div>
+          </div>
+          <p class="hint" id="export-status" role="status"></p>
+        </section>
+      </div>
+
+      <footer class="panel-foot">
+        <button type="button" id="about-open" class="link">About, data and accuracy</button>
+      </footer>
+    </aside>
+
+    <div id="hud" aria-label="View tools">
+      <button type="button" id="compass" title="Face north" aria-label="Face north">
+        <svg viewBox="0 0 48 48" width="48" height="48" aria-hidden="true">
+          <circle cx="24" cy="24" r="22" class="compass-ring" />
+          <g id="compass-needle">
+            <path d="M24 5 L29 24 L24 21 L19 24 Z" class="needle-n" />
+            <path d="M24 43 L29 24 L24 27 L19 24 Z" class="needle-s" />
+            <text x="24" y="16.5" text-anchor="middle" class="compass-n">N</text>
+          </g>
+        </svg>
+      </button>
+      <button type="button" id="zoom-in" aria-label="Zoom in">+</button>
+      <button type="button" id="zoom-out" aria-label="Zoom out">−</button>
+    </div>
+
+    <div id="stick" hidden aria-label="Walk">
+      <div id="stick-knob"></div>
+    </div>
+
+    <div id="mapfoot">
+      <div id="scalebar" aria-label="Scale bar"><span id="scale-line"></span><span id="scale-text">100 m</span></div>
+      <output id="coords" aria-label="Coordinates at view centre"></output>
+      <p id="attribution">
+        © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> · architectural details approximate
+      </p>
+    </div>
+
+    <dialog id="about">
+      <form method="dialog">
+        <p class="eyebrow">About this model</p>
+        <h2>What is real and what is approximate</h2>
+        <p>
+          Every mesh, texture and sign here is generated in code at load time. Nothing is downloaded while you explore: no map tiles, no
+          photos, no imported 3D models and no API keys.
+        </p>
+        <h3>From OpenStreetMap</h3>
+        <p>
+          Building footprints and tagged heights, streets, tram and Stadtbahn tracks, parks, water, trees, lamps, benches and stops were
+          baked from OpenStreetMap into the app. One scene unit is one metre. Data snapshot: <span id="about-date"></span>.
+        </p>
+        <h3>Approximated</h3>
+        <p>
+          The six landmarks use published overall dimensions on their mapped footprints, but facades, ornament, window counts, signage and
+          interiors are simplified. Ordinary buildings get generic facades chosen from their tags. Vehicles, timetables, crowds, weather
+          and lighting are illustrative. This is not a survey and should not be used for measurement.
+        </p>
+        <p class="credit">
+          Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>,
+          available under the Open Database License. Google Earth was used only as a visual reference; no Google imagery or data is included.
+        </p>
+        <button class="button primary" value="close">Close</button>
+      </form>
+    </dialog>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

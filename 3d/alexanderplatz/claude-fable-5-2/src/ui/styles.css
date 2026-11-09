@@ -1,0 +1,814 @@
+:root {
+  /* bottle-green ground, paper ink, one signal yellow borrowed from the trams */
+  --ground: #0f2a22;
+  --ground-raised: #16382d;
+  --ground-sunk: #0a1f19;
+  --line: #2a4d40;
+  --ink: #eef2ea;
+  --ink-2: #b1c3b6;
+  --ink-3: #7f978a;
+  --accent: #f2cc2e;
+  --accent-ink: #14261f;
+  --radius: 4px;
+  --font: 'Geist Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-label: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, Menlo, monospace;
+  --panel-w: 320px;
+  --sheet-h: 0px;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--ground-sunk);
+  color: var(--ink);
+  font: 400 0.875rem/1.45 var(--font);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+#scene {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+  outline: none;
+}
+
+h1,
+h2,
+h3,
+p,
+ol,
+ul {
+  margin: 0;
+  padding: 0;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 2px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.eyebrow {
+  font: 600 0.75rem/1.3 var(--font-label);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* ---------- loading ---------- */
+
+#loading {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  background: var(--ground-sunk);
+  transition: opacity 0.5s ease, visibility 0.5s;
+}
+
+#loading.done {
+  opacity: 0;
+  visibility: hidden;
+  /* never swallow a drag while fading out */
+  pointer-events: none;
+}
+
+.loading-card {
+  width: min(360px, calc(100vw - 48px));
+}
+
+.loading-card h1 {
+  font: 600 2.25rem/1.1 var(--font);
+  letter-spacing: -0.02em;
+  margin: 8px 0 24px;
+}
+
+.progress {
+  height: 4px;
+  background: var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+#progress-bar {
+  height: 100%;
+  width: 0;
+  background: var(--accent);
+  transition: width 0.2s ease;
+}
+
+#progress-label {
+  margin-top: 12px;
+  color: var(--ink-2);
+  font-size: 0.875rem;
+}
+
+/* ---------- panel ---------- */
+
+#panel {
+  position: fixed;
+  z-index: 10;
+  top: 16px;
+  left: 16px;
+  width: var(--panel-w);
+  max-height: calc(100% - 32px);
+  display: flex;
+  flex-direction: column;
+  background: var(--ground);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 12px 32px rgb(4 14 11 / 0.45);
+}
+
+.panel-head {
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid var(--line);
+  /* tick marks along the top edge, like a map frame */
+  background: repeating-linear-gradient(90deg, var(--ink-3) 0 1px, transparent 1px 16px) top left / 100% 4px no-repeat;
+}
+
+.panel-head h1 {
+  font: 600 1.5rem/1.15 var(--font);
+  letter-spacing: -0.015em;
+  margin-top: 4px;
+}
+
+.lede {
+  color: var(--ink-2);
+  margin-top: 4px;
+}
+
+#sheet-handle,
+#tabs {
+  display: none;
+}
+
+.panel-body {
+  overflow-y: auto;
+  padding: 4px 16px 16px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+
+section h2 {
+  font: 600 0.75rem/1.3 var(--font-label);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 16px 0 8px;
+}
+
+.segmented {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  background: var(--ground-sunk);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 2px;
+  gap: 2px;
+}
+
+.segmented button {
+  min-height: 32px;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--ink-2);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.segmented button:hover {
+  color: var(--ink);
+  background: var(--ground-raised);
+}
+
+.segmented button[aria-pressed='true'] {
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 600;
+}
+
+.segmented.compact {
+  flex: 1;
+}
+
+.hint,
+.readout {
+  color: var(--ink-3);
+  font-size: 0.75rem;
+  margin-top: 8px;
+  min-height: 1.1rem;
+}
+
+.readout output,
+#coords {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.button {
+  min-height: 36px;
+  padding: 4px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--ground-raised);
+  font-weight: 500;
+  min-width: 96px;
+}
+
+.button:hover {
+  border-color: var(--ink-3);
+}
+
+.button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 600;
+}
+
+.button.primary:hover {
+  filter: brightness(1.06);
+}
+
+.link {
+  border: 0;
+  background: none;
+  padding: 0;
+  color: var(--ink-2);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.link:hover {
+  color: var(--ink);
+}
+
+/* landmarks */
+
+#landmarks {
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+#landmarks button {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
+  align-items: baseline;
+  gap: 8px;
+  padding: 8px 4px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: none;
+  text-align: left;
+}
+
+#landmarks button:hover {
+  background: var(--ground-raised);
+}
+
+#landmarks .num {
+  font: 500 0.75rem var(--font-mono);
+  color: var(--ink-3);
+}
+
+#landmarks .name {
+  font-weight: 500;
+}
+
+#landmarks .height {
+  font: 400 0.75rem var(--font-mono);
+  color: var(--ink-3);
+}
+
+#landmarks button[aria-current='true'] .num,
+#landmarks button[aria-current='true'] .name {
+  color: var(--accent);
+}
+
+#landmark-card {
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--ground-sunk);
+  border-left: 2px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+#landmark-card h3 {
+  font: 600 1rem/1.3 var(--font);
+  margin: 4px 0 8px;
+}
+
+#landmark-card ul {
+  list-style: none;
+  color: var(--ink-2);
+  display: grid;
+  gap: 4px;
+}
+
+#landmark-card li {
+  padding-left: 12px;
+  position: relative;
+}
+
+#landmark-card li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 4px;
+  height: 1px;
+  background: var(--ink-3);
+}
+
+.approx {
+  margin-top: 8px;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+
+.approx strong {
+  font-weight: 600;
+  color: var(--ink-2);
+}
+
+/* checkboxes */
+
+.checks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 12px;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  color: var(--ink-2);
+  cursor: pointer;
+}
+
+.check:hover {
+  color: var(--ink);
+}
+
+.check input {
+  appearance: none;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  border: 1px solid var(--ink-3);
+  border-radius: 2px;
+  background: var(--ground-sunk);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.check input:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.check input:checked::after {
+  content: '';
+  width: 8px;
+  height: 4px;
+  border: solid var(--accent-ink);
+  border-width: 0 0 2px 2px;
+  transform: translateY(-1px) rotate(-45deg);
+}
+
+.check input:checked + span {
+  color: var(--ink);
+}
+
+section > .check {
+  margin-top: 8px;
+}
+
+.panel-foot {
+  padding: 12px 16px;
+  border-top: 1px solid var(--line);
+  font-size: 0.75rem;
+}
+
+/* ---------- HUD ---------- */
+
+#hud {
+  position: fixed;
+  z-index: 9;
+  top: 16px;
+  right: 16px;
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+}
+
+#hud button {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--ground);
+  font: 500 1.25rem/1 var(--font);
+  display: grid;
+  place-items: center;
+}
+
+#hud button:hover {
+  border-color: var(--ink-3);
+}
+
+#hud #compass {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+}
+
+.compass-ring {
+  fill: var(--ground);
+  stroke: var(--line);
+}
+
+.needle-n {
+  fill: var(--accent);
+}
+
+.needle-s {
+  fill: var(--ink-3);
+}
+
+.compass-n {
+  font: 700 8px var(--font);
+  fill: var(--accent-ink);
+}
+
+#compass-needle {
+  transform-origin: 24px 24px;
+}
+
+/* ---------- map footer: scale, coordinates, attribution ---------- */
+
+#mapfoot {
+  position: fixed;
+  z-index: 8;
+  left: calc(var(--panel-w) + 32px);
+  right: 16px;
+  bottom: 12px;
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  pointer-events: none;
+  font-size: 0.75rem;
+  color: var(--ink);
+  text-shadow: 0 1px 2px rgb(4 14 11 / 0.8);
+}
+
+#scalebar {
+  display: grid;
+  gap: 4px;
+  font-family: var(--font-mono);
+}
+
+#scale-line {
+  display: block;
+  height: 6px;
+  width: 100px;
+  border: solid var(--ink);
+  border-width: 0 2px 2px;
+  filter: drop-shadow(0 1px 1px rgb(4 14 11 / 0.7));
+}
+
+#coords {
+  padding-bottom: 1px;
+}
+
+#attribution {
+  margin-left: auto;
+  pointer-events: auto;
+  padding: 4px 8px;
+  background: rgb(15 42 34 / 0.86);
+  border-radius: var(--radius);
+  text-shadow: none;
+  color: var(--ink-2);
+}
+
+/* ---------- landmark labels ---------- */
+
+#labels {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px 2px 2px;
+  border: 0;
+  border-radius: var(--radius);
+  background: rgb(15 42 34 / 0.9);
+  color: var(--ink);
+  font: 600 0.875rem/1.2 var(--font-label);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: auto;
+  will-change: transform;
+}
+
+.label::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 1px;
+  height: 12px;
+  background: var(--ink);
+  opacity: 0.7;
+}
+
+.label .num {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 2px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font: 600 0.75rem/1 var(--font-mono);
+}
+
+.label:hover {
+  background: var(--ground-raised);
+}
+
+/* ---------- walk stick ---------- */
+
+#stick {
+  position: fixed;
+  z-index: 9;
+  left: 24px;
+  bottom: calc(var(--sheet-h) + 24px);
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  border: 1px solid var(--ink-3);
+  background: rgb(15 42 34 / 0.6);
+  touch-action: none;
+}
+
+#stick[hidden] {
+  display: none;
+}
+
+#stick-knob {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 48px;
+  height: 48px;
+  margin: -24px 0 0 -24px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 2px 8px rgb(4 14 11 / 0.5);
+}
+
+@media (pointer: fine) {
+  #stick {
+    left: calc(var(--panel-w) + 40px);
+    bottom: 64px;
+  }
+}
+
+/* ---------- about dialog ---------- */
+
+dialog {
+  width: min(560px, calc(100vw - 32px));
+  max-height: calc(100vh - 48px);
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--ground);
+  color: var(--ink-2);
+}
+
+dialog::backdrop {
+  background: rgb(4 14 11 / 0.6);
+}
+
+dialog h2 {
+  font: 600 1.25rem/1.25 var(--font);
+  color: var(--ink);
+  margin: 4px 0 12px;
+}
+
+dialog h3 {
+  font: 600 0.875rem/1.3 var(--font);
+  color: var(--ink);
+  margin: 16px 0 4px;
+}
+
+dialog .credit {
+  margin: 16px 0 24px;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+
+/* ---------- small screens: the panel becomes a bottom sheet ---------- */
+
+@media (max-width: 760px) {
+  #panel {
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    max-height: none;
+    border-width: 1px 0 0;
+    border-radius: 8px 8px 0 0;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .panel-head {
+    position: relative;
+    padding: 20px 16px 8px;
+    border-bottom: 0;
+    background: none;
+  }
+
+  .panel-head .eyebrow,
+  .lede {
+    display: none;
+  }
+
+  .panel-head h1 {
+    font-size: 1.125rem;
+    margin: 0;
+  }
+
+  #sheet-handle {
+    display: block;
+    position: absolute;
+    inset: 0 0 auto;
+    height: 20px;
+    border: 0;
+    background: none;
+  }
+
+  #sheet-handle span {
+    display: block;
+    width: 40px;
+    height: 4px;
+    margin: 8px auto 0;
+    border-radius: 2px;
+    background: var(--ink-3);
+  }
+
+  #tabs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    padding: 0 8px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  #tabs button {
+    min-height: 44px;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: none;
+    color: var(--ink-2);
+    font: 600 0.875rem var(--font-label);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  #tabs button[aria-selected='true'] {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .panel-body {
+    max-height: 0;
+    padding: 0 16px;
+    overflow-y: auto;
+    transition: max-height 0.25s ease;
+  }
+
+  #panel.open .panel-body {
+    max-height: min(42vh, 360px);
+    padding-bottom: 16px;
+  }
+
+  .panel-body section {
+    display: none;
+  }
+
+  .panel-body section.active {
+    display: block;
+  }
+
+  .panel-foot {
+    display: none;
+  }
+
+  #panel.open .panel-foot {
+    display: block;
+  }
+
+  .segmented button,
+  .button {
+    min-height: 44px;
+  }
+
+  .check,
+  #landmarks button {
+    min-height: 44px;
+  }
+
+  #hud {
+    top: calc(8px + env(safe-area-inset-top));
+    right: 8px;
+  }
+
+  #hud button {
+    width: 44px;
+    height: 44px;
+  }
+
+  #mapfoot {
+    left: 8px;
+    right: 64px;
+    top: calc(8px + env(safe-area-inset-top));
+    bottom: auto;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  #attribution {
+    order: -1;
+    margin-left: 0;
+    font-size: 0.75rem;
+  }
+
+  #coords {
+    display: none;
+  }
+
+  .label {
+    font-size: 0.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}

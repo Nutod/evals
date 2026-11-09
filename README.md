@@ -8,6 +8,7 @@ AI-generated implementations of shared coding tasks, organized by category, task
 | ---------------------- | ----------- | ----------------------------------------------------------------------- |
 | Alexanderplatz, Berlin | GPT-6.1 Sol | [3d/alexanderplatz/gpt-6-1-sol](3d/alexanderplatz/gpt-6-1-sol/)         |
 | Alexanderplatz, Berlin | Opus 5.5    | [3d/alexanderplatz/claude-opus-5-5](3d/alexanderplatz/claude-opus-5-5/) |
+| Alexanderplatz, Berlin | Fable 5.2   | [3d/alexanderplatz/claude-fable-5-2](3d/alexanderplatz/claude-fable-5-2/) |
 | The Lonely Mountain    | GPT-6.1 Sol | [3d/lonely-mountain/gpt-6-1-sol](3d/lonely-mountain/gpt-6-1-sol/) |
 | The Lonely Mountain    | Opus 5.5    | [3d/lonely-mountain/claude-opus-5-5](3d/lonely-mountain/claude-opus-5-5/) |
 
@@ -54,3 +55,14 @@ npm run test:production
 ```
 
 Browser tests require the dev server on port 5173 and an installed Chrome. Build explicitly before the production test if npm lifecycle scripts are disabled. See the [app README](3d/alexanderplatz/gpt-6-1-sol/README.md) for controls, fidelity limits, data attribution and verification details.
+
+### Fable 5.2
+
+```sh
+cd 3d/alexanderplatz/claude-fable-5-2
+npm ci
+npm run dev
+npm test   # unit tests, then Playwright against the production build
+```
+
+The [app README](3d/alexanderplatz/claude-fable-5-2/README.md) covers controls, landmark dimensions, code layout, accuracy limits and attribution.
