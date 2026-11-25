@@ -1,0 +1,14 @@
+{
+  "name": "stadtform-atlas",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "3d/alexanderplatz/stadtform"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w stadtform --",
+    "build": "npm run build -w stadtform",
+    "preview": "npm run preview -w stadtform --",
+    "test": "npm test -w stadtform"
+  }
+}

@@ -6,6 +6,7 @@ AI-generated implementations of shared coding tasks, organized by category, task
 
 | Task                   | Model       | Implementation                                                          |
 | ---------------------- | ----------- | ----------------------------------------------------------------------- |
+| Alexanderplatz, Berlin | Codex       | [Stadtform Atlas](3d/alexanderplatz/stadtform/)                         |
 | Alexanderplatz, Berlin | GPT-6.1 Sol | [3d/alexanderplatz/gpt-6-1-sol](3d/alexanderplatz/gpt-6-1-sol/)         |
 | Alexanderplatz, Berlin | Opus 5.5    | [3d/alexanderplatz/claude-opus-5-5](3d/alexanderplatz/claude-opus-5-5/) |
 | Alexanderplatz, Berlin | Fable 5.2   | [3d/alexanderplatz/claude-fable-5-2](3d/alexanderplatz/claude-fable-5-2/) |
@@ -36,6 +37,19 @@ npm test
 ```
 
 ## Run Alexanderplatz
+
+### Stadtform Atlas
+
+From the repository root, with Node.js 22.12+:
+
+```sh
+npm ci
+npm run dev
+```
+
+Run `npm run build` for a static deployment or `npm test` for the production browser suite. The [atlas guide](3d/alexanderplatz/stadtform/README.md) includes controls, browser setup, data attribution and the visual references.
+
+### GPT-6.1 Sol
 
 Requires Node.js 22.12+ or 24+.
 

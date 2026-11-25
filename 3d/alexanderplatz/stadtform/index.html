@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <meta name="theme-color" content="#192e26" />
+    <meta
+      name="description"
+      content="Explore a procedural architectural model of Berlin's Alexanderplatz in three dimensions."
+    />
+    <link rel="icon" href="./mark.svg" type="image/svg+xml" />
+    <title>Alexanderplatz · Stadtform Atlas</title>
+  </head>
+  <body>
+    <header class="mast">
+      <div class="brand">
+        <span id="brand-mark"></span><strong>Stadtform</strong><span class="brand-rule"></span
+        ><span class="brand-sub">Urban Atlas</span>
+      </div>
+      <div class="mast-actions">
+        <button id="about" class="plain" aria-label="Model info">
+          <i data-icon="info"></i><span>Model info</span></button
+        ><button id="export" class="export"><i data-icon="export"></i><span>Export PNG</span></button>
+      </div>
+    </header>
+    <main>
+      <aside id="guide" aria-label="District guide">
+        <section class="intro">
+          <div class="eyebrow district-code"><span></span>BERLIN &nbsp;/&nbsp; MITTE</div>
+          <h1>Alexanderplatz</h1>
+          <div class="coords">52°31′18″ N &nbsp; 13°24′48″ E</div>
+          <div id="skyline"></div>
+        </section>
+        <button id="mobile-guide" aria-expanded="false">
+          <span>District guide</span><i data-icon="up"></i>
+        </button>
+        <div class="guide-body">
+          <section class="index">
+            <div class="section-title">
+              <h2>Landmark index</h2>
+              <span class="count">06</span>
+            </div>
+            <nav id="places" aria-label="Landmarks"></nav>
+          </section>
+          <section class="lighting">
+            <div class="section-title">
+              <h2>Lighting</h2>
+              <i data-icon="sun"></i>
+            </div>
+            <div id="lights"></div>
+          </section>
+        </div>
+      </aside>
+      <section id="viewport" aria-label="Interactive district model">
+        <div id="surface">
+          <canvas id="scene" tabindex="0" aria-label="3D model of Alexanderplatz"></canvas>
+          <div id="markers"></div>
+        </div>
+        <div class="simulation">
+          <span class="live-dot"></span><span id="sim-state">Simulation live</span><b></b
+          ><button id="play" title="Pause animation" aria-label="Pause animation"></button
+          ><button id="speed" title="Change animation speed" aria-label="Change animation speed">1×</button>
+        </div>
+        <div class="map-tools">
+          <button id="north" title="Face north" aria-label="Face north">
+            <span>N</span
+            ><svg viewBox="0 0 30 34" id="needle">
+              <path d="m15 2 5.8 22-5.8-4.8L9.2 24z" fill="#264238" />
+              <path d="m15 32-5.8-11.8L15 23l5.8-2.8z" fill="#9ca99c" />
+            </svg>
+          </button>
+          <div class="zoom">
+            <button id="zoom-in" title="Zoom in" aria-label="Zoom in"><i data-icon="plus"></i></button
+            ><button id="zoom-out" title="Zoom out" aria-label="Zoom out"><i data-icon="minus"></i></button>
+          </div>
+          <button id="reset" title="District overview" aria-label="District overview">
+            <i data-icon="reset"></i>
+          </button>
+        </div>
+        <div class="location">
+          <span class="eyebrow">LOCATOR</span
+          ><canvas
+            id="locator"
+            width="260"
+            height="132"
+            aria-label="Locator map showing camera direction"
+          ></canvas>
+        </div>
+        <div class="scale"><span id="scale-text">100 m</span><b id="scale-bar"></b></div>
+        <div class="dock-area">
+          <div id="layers-panel" class="popover" hidden>
+            <div class="section-title">
+              <h2>Map layers</h2>
+              <button class="close" title="Close layers" aria-label="Close layers">
+                <i data-icon="close"></i>
+              </button>
+            </div>
+            <div id="layers"></div>
+          </div>
+          <div class="dock">
+            <div id="modes">
+              <button data-mode="orbit" aria-pressed="true" title="Start automatic orbit"><i data-icon="orbit"></i><span>Orbit</span></button
+              ><button data-mode="top" aria-pressed="false"><i data-icon="plan"></i>Top-down</button
+              ><button data-mode="street" aria-pressed="false"><i data-icon="street"></i>Street</button>
+            </div>
+            <b></b
+            ><button id="layers-toggle" aria-controls="layers-panel" aria-expanded="false">
+              <i data-icon="layers"></i><span>Layers</span>
+            </button>
+          </div>
+        </div>
+        <div id="walk" hidden aria-label="Walk with touch"><span></span></div>
+        <div id="focus-card" hidden>
+          <div>
+            <small id="focus-kind"></small>
+            <h2 id="focus-title"></h2>
+            <p id="focus-fact"></p>
+          </div>
+          <button class="close" aria-label="Return to district overview"><i data-icon="close"></i></button>
+        </div>
+        <div id="loading" role="status">
+          <div class="loader-track"><b></b></div>
+          <span>Building the district…</span>
+        </div>
+      </section>
+    </main>
+    <footer>
+      <span class="foot-place"><i data-icon="globe"></i>Berlin, DE</span><span class="foot-rule"></span
+      ><span>1 unit = 1 m</span><span class="accuracy-note">Approximate architecture</span
+      ><span class="foot-hint" id="hint">Drag to orbit · Right-drag to pan · Scroll to zoom</span
+      ><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer"
+        >© OpenStreetMap contributors</a
+      >
+    </footer>
+    <dialog id="info">
+      <div class="dialog-top">
+        <span class="eyebrow">MODEL INFORMATION</span
+        ><button class="close" aria-label="Close model information"><i data-icon="close"></i></button>
+      </div>
+      <h2>Alexanderplatz</h2>
+      <p>A procedural scale model of Berlin-Mitte. One scene unit represents one metre.</p>
+      <h3>Geometry and sources</h3>
+      <p>
+        Building footprints, streets, tracks and tree positions use a bundled OpenStreetMap extract. Landmark
+        proportions follow published dimensions. Facades, ornaments, heights without survey data and transit
+        movements are approximate.
+      </p>
+      <p>
+        <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer"
+          >© OpenStreetMap contributors</a
+        >
+        ·
+        <a href="https://opendatacommons.org/licenses/odbl/1-0/" target="_blank" rel="noreferrer"
+          >Open Database License 1.0</a
+        >
+      </p>
+      <h3>Controls</h3>
+      <p>
+        Select Orbit to circle the current view. Select Stop orbit to hold the angle, or drag to turn the camera yourself. Right-drag to pan and scroll to zoom. On touchscreens, use two fingers to pan or pinch.
+        At street level, drag to look and use WASD or the touch stick to walk.
+      </p>
+      <p class="shortcuts"><kbd>1–6</kbd> Visit a landmark <kbd>Space</kbd> Pause <kbd>R</kbd> Overview</p>
+    </dialog>
+    <div id="toast" role="status" hidden></div>
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>
